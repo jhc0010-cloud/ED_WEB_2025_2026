@@ -1,0 +1,33 @@
+:root {
+    --brand-primary: #1c7c54;
+    --brand-secondary: #f4b942;
+    --brand-surface: #ffffff;
+    --brand-muted: #eef5f1;
+    --brand-text: #18322a;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--brand-text);
+    background: linear-gradient(180deg, #f7fbf9 0%, #eef6f2 100%);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: var(--brand-primary);
+}
+
+.hero-card,
+.form-card,
+.panel-card {
+    background: var(--brand-surface);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(28, 124, 84, 0.12);
+    padding: 2rem;
+}
+
+.form-card {
+    max-width: 520px;
+}
+
