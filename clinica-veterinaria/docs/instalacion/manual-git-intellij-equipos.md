@@ -342,3 +342,4 @@ Solucion:
 - "El jefe de equipo integra en `develop`".
 - "`main` solo se actualiza cuando todo funciona".
 
+22
