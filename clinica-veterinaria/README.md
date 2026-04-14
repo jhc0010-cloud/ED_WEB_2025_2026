@@ -21,6 +21,10 @@ Proyecto DAW de gestión de clínica veterinaria con backend en Spring Boot y fr
 - `database/` -> scripts SQL
 - `docs/` -> documentación
 
+## Documentación útil
+
+- `docs/instalacion/manual-git-intellij-equipos.md` -> tutorial de Git e IntelliJ para alumnado y jefes de equipo
+
 ## Ejecución
 
 1. Crear la base de datos MySQL.
@@ -36,4 +40,3 @@ Este repositorio incluye una base estructural completa del proyecto:
 - Entidades, DTOs, repositorios, servicios y controladores base.
 - Frontend multipágina preparado por perfiles.
 - Scripts SQL y documentación inicial.
-
