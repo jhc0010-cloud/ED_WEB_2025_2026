@@ -1,3 +1,2425 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><title>Clientes</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link rel="stylesheet" href="/css/styles.css"></head><body><main class="container py-4"><h1>Clientes</h1><div class="panel-card">Listado de clientes.</div></main><script src="/js/auxiliar/clientes.js"></script></body></html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Clientes — Clínica Veterinaria Central</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+    <style>
+        /* ── TOKENS ─────────────────────────────────────────────── */
+        :root {
+          --ink:          #0f1b2d;
+          --ink-2:        #3a4e65;
+          --ink-3:        #7a8fa6;
+          --paper:        #f5f0e8;
+          --paper-2:      #ede7db;
+          --paper-3:      #e3dbd0;
+          --white:        #ffffff;
+          --accent:       #c0392b;
+          --accent-soft:  #f9ecea;
+          --accent-2:     #2980b9;
+          --accent-2-soft:#eaf3fb;
+          --green:        #1a7a4a;
+          --green-soft:   #e8f6ef;
+          --amber:        #b7690a;
+          --amber-soft:   #fef3e2;
+          --line:         rgba(15,27,45,0.10);
+          --line-strong:  rgba(15,27,45,0.18);
+          --shadow-sm: 0 2px 8px rgba(15,27,45,0.07);
+          --shadow-md: 0 6px 24px rgba(15,27,45,0.10);
+          --shadow-lg: 0 18px 56px rgba(15,27,45,0.14);
+          --r-sm: 10px;
+          --r-md: 16px;
+          --r-lg: 22px;
+          --r-xl: 30px;
+          --font-serif: "DM Serif Display", Georgia, serif;
+          --font-sans:  "DM Sans", system-ui, sans-serif;
+        }
 
+        /* ── RESET & BASE ────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+          font-family: var(--font-sans);
+          background: var(--paper);
+          color: var(--ink);
+          min-height: 100vh;
+        }
+
+        /* ── SCREEN SYSTEM ───────────────────────────────────────── */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* ── DEMO TOOLBAR ────────────────────────────────────────── */
+        .demo-bar {
+          position: fixed; top: 1rem; right: 1rem; z-index: 9999;
+          display: flex; align-items: center; gap: .6rem;
+          padding: .65rem .9rem;
+          background: rgba(15,27,45,0.92);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 14px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        }
+        .demo-bar label { color: rgba(255,255,255,0.6); font-size: .78rem; font-weight: 600; white-space: nowrap; }
+        .demo-bar select {
+          background: rgba(255,255,255,0.95); border: none; border-radius: 8px;
+          padding: .35rem .65rem; font-size: .82rem; font-family: var(--font-sans);
+          color: var(--ink); min-width: 200px; cursor: pointer;
+        }
+        .demo-bar button {
+          background: var(--accent); color: #fff; border: none; border-radius: 8px;
+          padding: .38rem .85rem; font-size: .82rem; font-weight: 700;
+          cursor: pointer; font-family: var(--font-sans);
+        }
+        .demo-dot { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; box-shadow: 0 0 0 4px rgba(46,204,113,.2); }
+
+        /* ══════════════════════════════════════════════════════════
+           LAYOUT COMPARTIDO — SHELL CON SIDEBAR
+        ══════════════════════════════════════════════════════════ */
+        .app-shell {
+          display: grid;
+          grid-template-columns: 260px 1fr;
+          min-height: 100vh;
+        }
+
+        /* ── SIDEBAR ─────────────────────────────────────────────── */
+        .sidebar {
+          background: var(--ink);
+          color: rgba(255,255,255,0.88);
+          padding: 1.75rem 1.25rem;
+          display: flex; flex-direction: column;
+          position: sticky; top: 0; height: 100vh;
+          overflow-y: auto;
+        }
+        .sidebar-brand {
+          display: flex; align-items: center; gap: .85rem;
+          margin-bottom: 2.25rem; cursor: pointer; border: none; background: none;
+          padding: 0; color: white; text-align: left;
+        }
+        .brand-mark {
+          width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+          background: linear-gradient(135deg, var(--accent) 0%, #e74c3c 100%);
+          display: grid; place-items: center;
+          font-weight: 800; font-size: .9rem; letter-spacing: .05em; color: white;
+          box-shadow: 0 6px 18px rgba(192,57,43,.35);
+        }
+        .sidebar-brand-text strong { display: block; font-size: .92rem; font-weight: 700; }
+        .sidebar-brand-text span { font-size: .76rem; color: rgba(255,255,255,.5); }
+
+        .sidebar-section-label {
+          font-size: .68rem; text-transform: uppercase; letter-spacing: .14em;
+          font-weight: 700; color: rgba(255,255,255,.35); margin: 1.5rem 0 .5rem .5rem;
+        }
+        .sidebar-section-label:first-of-type { margin-top: 0; }
+
+        .nav-item {
+          display: flex; align-items: center; gap: .75rem;
+          padding: .68rem .85rem; border-radius: var(--r-sm);
+          color: rgba(255,255,255,.7); font-weight: 500; font-size: .9rem;
+          cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+          transition: background .18s, color .18s;
+        }
+        .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .nav-item.active {
+          background: rgba(192,57,43,.22); color: #fff;
+          border-left: 3px solid var(--accent);
+        }
+        .nav-icon { width: 18px; text-align: center; opacity: .75; }
+        .nav-badge {
+          margin-left: auto; background: var(--accent); color: white;
+          font-size: .7rem; font-weight: 700; padding: .15rem .45rem;
+          border-radius: 999px; min-width: 20px; text-align: center;
+        }
+
+        .sidebar-footer {
+          margin-top: auto; padding-top: 1.5rem;
+          border-top: 1px solid rgba(255,255,255,.08);
+        }
+        .user-card {
+          display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem;
+        }
+        .user-avatar {
+          width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+          background: linear-gradient(135deg, #3498db, #2980b9);
+          display: grid; place-items: center; font-weight: 700; font-size: .82rem; color: white;
+        }
+        .user-card-info strong { display: block; font-size: .88rem; color: #fff; }
+        .user-card-info span { font-size: .76rem; color: rgba(255,255,255,.45); }
+        .btn-logout {
+          width: 100%; padding: .6rem; border-radius: var(--r-sm);
+          border: 1px solid rgba(255,255,255,.12); background: transparent;
+          color: rgba(255,255,255,.55); font-size: .85rem; font-weight: 600;
+          cursor: pointer; transition: all .18s; font-family: var(--font-sans);
+        }
+        .btn-logout:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.8); }
+
+        /* ── MAIN WORKSPACE ──────────────────────────────────────── */
+        .workspace {
+          background: var(--paper);
+          display: flex; flex-direction: column;
+        }
+        .topbar {
+          padding: 1.25rem 2rem;
+          background: var(--white);
+          border-bottom: 1px solid var(--line);
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 1rem; flex-wrap: wrap;
+          box-shadow: var(--shadow-sm);
+        }
+        .topbar-left h1 {
+          font-family: var(--font-serif); font-size: 1.55rem;
+          font-weight: 400; letter-spacing: -.01em; color: var(--ink);
+        }
+        .topbar-left p { font-size: .84rem; color: var(--ink-3); margin-top: .15rem; }
+        .topbar-right { display: flex; align-items: center; gap: .75rem; }
+        .page-content { padding: 2rem; flex: 1; }
+
+        /* ── BUTTONS ─────────────────────────────────────────────── */
+        .btn {
+          display: inline-flex; align-items: center; gap: .45rem;
+          padding: .6rem 1.15rem; border-radius: var(--r-sm);
+          font-family: var(--font-sans); font-weight: 600; font-size: .88rem;
+          cursor: pointer; border: none; transition: all .18s; text-decoration: none;
+        }
+        .btn-primary {
+          background: var(--accent); color: white;
+          box-shadow: 0 4px 14px rgba(192,57,43,.25);
+        }
+        .btn-primary:hover { background: #a93226; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(192,57,43,.32); }
+        .btn-secondary {
+          background: var(--white); color: var(--ink); border: 1px solid var(--line-strong);
+        }
+        .btn-secondary:hover { background: var(--paper-2); }
+        .btn-ghost {
+          background: transparent; color: var(--ink-2); border: 1px solid var(--line);
+        }
+        .btn-ghost:hover { background: var(--paper-2); }
+        .btn-danger { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(192,57,43,.2); }
+        .btn-danger:hover { background: var(--accent); color: white; }
+        .btn-sm { padding: .4rem .85rem; font-size: .82rem; }
+        .btn-lg { padding: .8rem 1.6rem; font-size: .96rem; border-radius: var(--r-md); }
+
+        /* ── FORM CONTROLS ───────────────────────────────────────── */
+        .form-label {
+          display: block; font-size: .82rem; font-weight: 600;
+          color: var(--ink-2); margin-bottom: .4rem; letter-spacing: .01em;
+        }
+        .form-hint { font-size: .78rem; color: var(--ink-3); margin-top: .3rem; }
+        .form-control, .form-select {
+          width: 100%; padding: .72rem 1rem; border-radius: var(--r-sm);
+          border: 1.5px solid var(--line-strong); background: var(--white);
+          font-family: var(--font-sans); font-size: .9rem; color: var(--ink);
+          transition: border-color .18s, box-shadow .18s; outline: none;
+        }
+        .form-control:focus, .form-select:focus {
+          border-color: var(--accent-2); box-shadow: 0 0 0 3px rgba(41,128,185,.12);
+        }
+        .form-control::placeholder { color: var(--ink-3); }
+        textarea.form-control { resize: vertical; min-height: 90px; }
+        .input-group { position: relative; }
+        .input-group .form-control { padding-left: 2.5rem; }
+        .input-group-icon {
+          position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
+          color: var(--ink-3); font-size: .95rem; pointer-events: none;
+        }
+        .form-row { display: grid; gap: 1.25rem; }
+        .form-row-2 { grid-template-columns: 1fr 1fr; }
+        .form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .form-section {
+          padding: 1.5rem; background: var(--white); border-radius: var(--r-md);
+          border: 1px solid var(--line); margin-bottom: 1.25rem;
+        }
+        .form-section-title {
+          font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400;
+          color: var(--ink); margin-bottom: 1.1rem; padding-bottom: .75rem;
+          border-bottom: 1px solid var(--line);
+        }
+        .form-section-title span {
+          display: inline-block; font-size: .7rem; font-weight: 700; font-family: var(--font-sans);
+          text-transform: uppercase; letter-spacing: .1em; padding: .15rem .5rem;
+          border-radius: 5px; background: var(--accent-soft); color: var(--accent); margin-left: .6rem;
+          vertical-align: middle;
+        }
+
+        /* ── BADGES / CHIPS ──────────────────────────────────────── */
+        .badge {
+          display: inline-flex; align-items: center; gap: .3rem;
+          font-size: .74rem; font-weight: 700; padding: .22rem .6rem;
+          border-radius: 999px; letter-spacing: .02em;
+        }
+        .badge-green  { background: var(--green-soft); color: var(--green); }
+        .badge-amber  { background: var(--amber-soft); color: var(--amber); }
+        .badge-red    { background: var(--accent-soft); color: var(--accent); }
+        .badge-blue   { background: var(--accent-2-soft); color: var(--accent-2); }
+        .badge-gray   { background: var(--paper-2); color: var(--ink-3); }
+        .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+        /* ── CARDS ───────────────────────────────────────────────── */
+        .card {
+          background: var(--white); border-radius: var(--r-lg);
+          border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+        }
+        .card-body { padding: 1.5rem; }
+        .stat-card {
+          background: var(--white); border-radius: var(--r-md);
+          border: 1px solid var(--line); padding: 1.25rem 1.4rem;
+          box-shadow: var(--shadow-sm);
+        }
+        .stat-label {
+          font-size: .76rem; text-transform: uppercase; letter-spacing: .1em;
+          font-weight: 700; color: var(--ink-3); margin-bottom: .4rem;
+        }
+        .stat-value {
+          font-family: var(--font-serif); font-size: 2.1rem;
+          color: var(--ink); line-height: 1;
+        }
+        .stat-sub { font-size: .82rem; color: var(--ink-3); margin-top: .35rem; }
+
+        /* ── TABLA ───────────────────────────────────────────────── */
+        .table-wrap {
+          background: var(--white); border-radius: var(--r-lg);
+          border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+          overflow: hidden;
+        }
+        .table-header {
+          padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--line);
+          display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+          background: linear-gradient(180deg, var(--white) 0%, var(--paper) 100%);
+        }
+        .table-title { font-weight: 700; font-size: .95rem; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+          padding: .85rem 1.1rem; font-size: .74rem; text-transform: uppercase;
+          letter-spacing: .08em; font-weight: 700; color: var(--ink-3);
+          background: var(--paper); border-bottom: 1px solid var(--line);
+          text-align: left; white-space: nowrap;
+        }
+        tbody tr { border-bottom: 1px solid var(--line); transition: background .15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #faf9f6; }
+        td { padding: .95rem 1.1rem; font-size: .9rem; color: var(--ink); vertical-align: middle; }
+        td .secondary { font-size: .8rem; color: var(--ink-3); margin-top: .12rem; }
+        .td-actions { text-align: right; white-space: nowrap; }
+
+        /* ── SEARCH BAR ──────────────────────────────────────────── */
+        .search-bar {
+          display: flex; gap: .75rem; align-items: center; flex-wrap: wrap;
+          margin-bottom: 1.5rem;
+        }
+        .search-bar .input-group { flex: 1; min-width: 220px; }
+
+        /* ── AVATAR ──────────────────────────────────────────────── */
+        .client-avatar {
+          width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+          display: grid; place-items: center; font-weight: 700; font-size: .85rem;
+          color: white; background: linear-gradient(135deg, #3d6fa8, #2980b9);
+        }
+        .client-avatar.female { background: linear-gradient(135deg, #8e5ea2, #6c3483); }
+        .client-with-avatar { display: flex; align-items: center; gap: .75rem; }
+
+        /* ── DETAIL LAYOUT ───────────────────────────────────────── */
+        .detail-grid {
+          display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem;
+          align-items: start;
+        }
+        .detail-sidebar-card {
+          background: var(--white); border-radius: var(--r-lg);
+          border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+          overflow: hidden;
+        }
+        .detail-sidebar-header {
+          padding: 1.5rem; text-align: center;
+          background: linear-gradient(160deg, var(--ink) 0%, #1a3050 100%);
+          color: white;
+        }
+        .detail-avatar-lg {
+          width: 72px; height: 72px; border-radius: 50%; margin: 0 auto .85rem;
+          display: grid; place-items: center; font-weight: 800; font-size: 1.4rem;
+          color: white; background: linear-gradient(135deg, #3d6fa8, #2980b9);
+          border: 3px solid rgba(255,255,255,.2);
+        }
+        .detail-avatar-lg.female { background: linear-gradient(135deg, #8e5ea2, #6c3483); }
+        .detail-sidebar-header h2 {
+          font-family: var(--font-serif); font-size: 1.3rem;
+          font-weight: 400; margin-bottom: .25rem;
+        }
+        .detail-sidebar-header p { font-size: .82rem; color: rgba(255,255,255,.6); }
+        .detail-info-list { padding: 1rem; }
+        .detail-info-row {
+          display: flex; justify-content: space-between; align-items: center;
+          padding: .65rem .5rem; border-bottom: 1px solid var(--line);
+          font-size: .86rem;
+        }
+        .detail-info-row:last-child { border-bottom: none; }
+        .detail-info-row .key { color: var(--ink-3); font-weight: 500; }
+        .detail-info-row .val { font-weight: 600; color: var(--ink); text-align: right; }
+
+        /* ── TABS ────────────────────────────────────────────────── */
+        .tabs { display: flex; gap: .25rem; margin-bottom: 1.5rem; padding-bottom: .75rem; border-bottom: 2px solid var(--line); }
+        .tab-btn {
+          padding: .55rem 1.1rem; border-radius: var(--r-sm);
+          border: none; background: none; font-family: var(--font-sans);
+          font-size: .88rem; font-weight: 600; color: var(--ink-3); cursor: pointer;
+          transition: all .18s;
+        }
+        .tab-btn:hover { color: var(--ink); background: var(--paper-2); }
+        .tab-btn.active { background: var(--accent); color: white; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* ── TIMELINE ────────────────────────────────────────────── */
+        .timeline { display: flex; flex-direction: column; gap: 0; }
+        .timeline-item {
+          display: grid; grid-template-columns: 90px 1fr;
+          gap: 1rem; align-items: start;
+          padding: 1rem 0; border-bottom: 1px solid var(--line);
+        }
+        .timeline-item:last-child { border-bottom: none; }
+        .timeline-date {
+          font-size: .8rem; font-weight: 700; color: var(--accent-2);
+          padding: .5rem .6rem; background: var(--accent-2-soft);
+          border-radius: var(--r-sm); text-align: center; line-height: 1.3;
+        }
+        .timeline-content { padding-top: .15rem; }
+        .timeline-content h4 { font-size: .92rem; font-weight: 700; margin-bottom: .2rem; }
+        .timeline-content p { font-size: .83rem; color: var(--ink-2); line-height: 1.5; }
+
+        /* ── PET CARD ────────────────────────────────────────────── */
+        .pet-card {
+          background: var(--white); border-radius: var(--r-md);
+          border: 1px solid var(--line); padding: 1.1rem;
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 1rem; box-shadow: var(--shadow-sm);
+        }
+        .pet-icon { font-size: 2rem; width: 48px; text-align: center; }
+        .pet-info { flex: 1; }
+        .pet-info strong { display: block; font-size: .92rem; font-weight: 700; }
+        .pet-info span { font-size: .8rem; color: var(--ink-3); }
+
+        /* ── EMPTY STATE ─────────────────────────────────────────── */
+        .empty-state {
+          text-align: center; padding: 3.5rem 1rem; color: var(--ink-3);
+        }
+        .empty-icon { font-size: 2.5rem; margin-bottom: .75rem; opacity: .5; }
+        .empty-state h3 { font-size: 1rem; font-weight: 700; color: var(--ink-2); margin-bottom: .4rem; }
+        .empty-state p { font-size: .86rem; max-width: 28ch; margin: 0 auto; }
+
+        /* ── ALERT ───────────────────────────────────────────────── */
+        .alert {
+          padding: .85rem 1.1rem; border-radius: var(--r-sm);
+          display: flex; gap: .75rem; align-items: flex-start; font-size: .88rem;
+          margin-bottom: 1.25rem;
+        }
+        .alert-warning { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(183,105,10,.15); }
+        .alert-info { background: var(--accent-2-soft); color: var(--accent-2); border: 1px solid rgba(41,128,185,.15); }
+
+        /* ── BREADCRUMB ──────────────────────────────────────────── */
+        .breadcrumb {
+          display: flex; align-items: center; gap: .4rem;
+          font-size: .82rem; color: var(--ink-3); margin-bottom: 1.5rem;
+        }
+        .breadcrumb a, .breadcrumb button {
+          color: var(--ink-3); cursor: pointer; border: none; background: none;
+          font-family: var(--font-sans); font-size: .82rem; padding: 0;
+          transition: color .15s;
+        }
+        .breadcrumb a:hover, .breadcrumb button:hover { color: var(--accent); }
+        .breadcrumb-sep { color: var(--line-strong); }
+
+        /* ── CONFIRMACIÓN ────────────────────────────────────────── */
+        .confirm-wrap {
+          max-width: 560px; margin: 0 auto; padding: 4rem 1rem;
+        }
+        .confirm-icon {
+          width: 80px; height: 80px; border-radius: 22px;
+          display: grid; place-items: center; font-size: 2rem;
+          margin: 0 auto 1.5rem;
+        }
+        .confirm-icon.success { background: var(--green-soft); }
+        .confirm-icon.danger { background: var(--accent-soft); }
+        .confirm-title { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 400; text-align: center; margin-bottom: .6rem; }
+        .confirm-sub { font-size: .92rem; color: var(--ink-2); text-align: center; margin-bottom: 1.75rem; max-width: 38ch; }
+        .confirm-summary {
+          background: var(--white); border-radius: var(--r-md);
+          border: 1px solid var(--line); overflow: hidden; margin-bottom: 1.75rem;
+        }
+        .confirm-row {
+          display: flex; justify-content: space-between;
+          padding: .85rem 1.2rem; border-bottom: 1px solid var(--line);
+          font-size: .88rem;
+        }
+        .confirm-row:last-child { border-bottom: none; }
+        .confirm-row .key { color: var(--ink-3); }
+        .confirm-row .val { font-weight: 700; }
+
+        /* ── STATS ROW ───────────────────────────────────────────── */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
+        .stat-accent { border-top: 3px solid var(--accent); }
+        .stat-blue   { border-top: 3px solid var(--accent-2); }
+        .stat-green  { border-top: 3px solid var(--green); }
+        .stat-amber  { border-top: 3px solid var(--amber); }
+
+        /* ── FILTER BAR ──────────────────────────────────────────── */
+        .filter-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .chip {
+          padding: .38rem .9rem; border-radius: 999px; font-size: .82rem; font-weight: 600;
+          cursor: pointer; border: 1.5px solid var(--line-strong); background: var(--white);
+          color: var(--ink-2); transition: all .18s; font-family: var(--font-sans);
+        }
+        .chip:hover { border-color: var(--accent); color: var(--accent); }
+        .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* ── PAGINATION ──────────────────────────────────────────── */
+        .pagination { display: flex; align-items: center; gap: .35rem; justify-content: flex-end; padding: 1rem 1.5rem; border-top: 1px solid var(--line); }
+        .page-btn {
+          width: 34px; height: 34px; display: grid; place-items: center;
+          border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--white);
+          font-size: .84rem; font-weight: 600; cursor: pointer; color: var(--ink-2);
+          font-family: var(--font-sans); transition: all .15s;
+        }
+        .page-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .page-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .page-info { font-size: .82rem; color: var(--ink-3); margin-right: auto; }
+
+        /* ── RESPONSIVE ──────────────────────────────────────────── */
+        @media (max-width: 1024px) {
+          .app-shell { grid-template-columns: 220px 1fr; }
+          .stats-row { grid-template-columns: repeat(2, 1fr); }
+          .detail-grid { grid-template-columns: 1fr; }
+          .form-row-3 { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+          .app-shell { grid-template-columns: 1fr; }
+          .sidebar { display: none; }
+          .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+          .page-content { padding: 1.25rem; }
+          .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DEMO TOOLBAR
+═══════════════════════════════════════════════════════════ -->
+<div class="demo-bar">
+    <div class="demo-dot"></div>
+    <label>Pantalla:</label>
+    <select id="screenNav">
+        <optgroup label="Gestión de Clientes">
+            <option value="citas-listado">Citas</option>
+            <option value="clientes-listado">Listado de clientes</option>
+            <option value="clientes-ficha">Ficha de cliente</option>
+            <option value="clientes-nuevo">Alta de cliente</option>
+            <option value="clientes-editar">Editar cliente</option>
+            <option value="clientes-confirmacion">Confirmación de alta</option>
+            <option value="clientes-baja">Dar de baja</option>
+        </optgroup>
+        <optgroup label="Citas">
+            <option value="citas-listado">Agenda de citas</option>
+            <option value="citas-ficha">Detalle de cita</option>
+            <option value="citas-nueva">Nueva cita</option>
+            <option value="citas-confirmacion">Confirmación de cita</option>
+        </optgroup>
+    </select>
+    <button onclick="goTo(document.getElementById('screenNav').value)">Ir</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LISTADO DE CLIENTES
+═══════════════════════════════════════════════════════════ -->
+<div class="screen active" id="screen-clientes-listado">
+    <div class="app-shell">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text">
+                    <strong>Vet Central</strong>
+                    <span>Gestión de Clientes</span>
+                </div>
+            </button>
+
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item active" onclick="goTo('clientes-listado')">
+                <span class="nav-icon">👥</span> Listado
+                <span class="nav-badge">142</span>
+            </button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')">
+                <span class="nav-icon">➕</span> Alta de cliente
+            </button>
+
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')">
+                <span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">📊</span> Informes
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">🔍</span> Búsqueda avanzada
+            </button>
+            <button class="nav-item" onclick="goTo('citas-listado')">
+                <span class="nav-icon">📅</span> Citas
+                <span class="nav-badge">5</span>
+            </button>
+
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info">
+                        <strong>Laura Martín</strong>
+                        <span>Auxiliar clínica</span>
+                    </div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <!-- Workspace -->
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Clientes</h1>
+                    <p>Directorio y gestión de propietarios registrados</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm">⬇ Exportar</button>
+                    <button class="btn btn-primary" onclick="goTo('clientes-nuevo')">➕ Nuevo cliente</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <!-- Stats -->
+                <div class="stats-row">
+                    <div class="stat-card stat-accent">
+                        <div class="stat-label">Total clientes</div>
+                        <div class="stat-value">142</div>
+                        <div class="stat-sub">+5 este mes</div>
+                    </div>
+                    <div class="stat-card stat-blue">
+                        <div class="stat-label">Activos</div>
+                        <div class="stat-value">128</div>
+                        <div class="stat-sub">Con cita en los últimos 90 días</div>
+                    </div>
+                    <div class="stat-card stat-green">
+                        <div class="stat-label">Mascotas registradas</div>
+                        <div class="stat-value">214</div>
+                        <div class="stat-sub">Media de 1,5 por cliente</div>
+                    </div>
+                    <div class="stat-card stat-amber">
+                        <div class="stat-label">Pendientes de revisión</div>
+                        <div class="stat-value">7</div>
+                        <div class="stat-sub">Datos incompletos</div>
+                    </div>
+                </div>
+
+                <!-- Búsqueda y filtros -->
+                <div class="search-bar">
+                    <div class="input-group" style="flex:1; min-width:240px;">
+                        <span class="input-group-icon">🔍</span>
+                        <input class="form-control" placeholder="Buscar por nombre, DNI, teléfono o email…" />
+                    </div>
+                    <button class="btn btn-secondary btn-sm">Filtros avanzados</button>
+                </div>
+                <div class="filter-chips">
+                    <button class="chip active" onclick="setChip(this)">Todos</button>
+                    <button class="chip" onclick="setChip(this)">Activos</button>
+                    <button class="chip" onclick="setChip(this)">Inactivos</button>
+                    <button class="chip" onclick="setChip(this)">Con deuda pendiente</button>
+                    <button class="chip" onclick="setChip(this)">Datos incompletos</button>
+                    <button class="chip" onclick="setChip(this)">Nuevos este mes</button>
+                </div>
+
+                <!-- Tabla -->
+                <div class="table-wrap">
+                    <div class="table-header">
+                        <span class="table-title">142 clientes</span>
+                        <div style="display:flex;gap:.5rem;align-items:center;">
+                            <span style="font-size:.8rem;color:var(--ink-3);">Ordenar por:</span>
+                            <select class="form-select" style="width:auto;padding:.35rem .7rem;font-size:.82rem;">
+                                <option>Nombre A–Z</option>
+                                <option>Última visita</option>
+                                <option>Fecha de alta</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>DNI / NIF</th>
+                            <th>Teléfono</th>
+                            <th>Mascotas</th>
+                            <th>Estado</th>
+                            <th>Última visita</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="client-avatar female">MP</div>
+                                    <div>
+                                        <strong>Marta Pérez Ruiz</strong>
+                                        <div class="secondary">marta.perez@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>48.712.344-K</td>
+                            <td>612 345 678</td>
+                            <td><span class="badge badge-blue">2 mascotas</span></td>
+                            <td><span class="badge badge-green"><span class="badge-dot"></span>Activo</span></td>
+                            <td>14 abr 2026</td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-ficha')">Ver ficha</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="client-avatar">PR</div>
+                                    <div>
+                                        <strong>Pedro Ramos García</strong>
+                                        <div class="secondary">pedro.ramos@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>32.541.099-F</td>
+                            <td>699 234 512</td>
+                            <td><span class="badge badge-blue">1 mascota</span></td>
+                            <td><span class="badge badge-green"><span class="badge-dot"></span>Activo</span></td>
+                            <td>10 abr 2026</td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-ficha')">Ver ficha</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="client-avatar female">AC</div>
+                                    <div>
+                                        <strong>Ana Castillo Vega</strong>
+                                        <div class="secondary">ana.castillo@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>55.809.332-R</td>
+                            <td>645 871 203</td>
+                            <td><span class="badge badge-blue">3 mascotas</span></td>
+                            <td><span class="badge badge-amber"><span class="badge-dot"></span>Datos incompletos</span></td>
+                            <td>03 mar 2026</td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-ficha')">Ver ficha</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="client-avatar">JG</div>
+                                    <div>
+                                        <strong>Javier González López</strong>
+                                        <div class="secondary">j.gonzalez@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>71.234.880-T</td>
+                            <td>618 902 341</td>
+                            <td><span class="badge badge-blue">1 mascota</span></td>
+                            <td><span class="badge badge-gray"><span class="badge-dot"></span>Inactivo</span></td>
+                            <td>12 ene 2026</td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-ficha')">Ver ficha</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="client-avatar female">CL</div>
+                                    <div>
+                                        <strong>Carmen López Díaz</strong>
+                                        <div class="secondary">carmen.lopez@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>29.445.178-M</td>
+                            <td>654 007 219</td>
+                            <td><span class="badge badge-blue">2 mascotas</span></td>
+                            <td><span class="badge badge-red"><span class="badge-dot"></span>Baja</span></td>
+                            <td>08 nov 2025</td>
+                            <td class="td-actions">
+                                <button class="btn btn-ghost btn-sm" onclick="goTo('clientes-ficha')">Ver ficha</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="client-avatar">LN</div>
+                                    <div>
+                                        <strong>Luis Navarro Sanz</strong>
+                                        <div class="secondary">luis.navarro@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>43.102.991-V</td>
+                            <td>635 441 788</td>
+                            <td><span class="badge badge-blue">1 mascota</span></td>
+                            <td><span class="badge badge-green"><span class="badge-dot"></span>Activo</span></td>
+                            <td>15 abr 2026</td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-ficha')">Ver ficha</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span class="page-info">Mostrando 1–6 de 142</span>
+                        <button class="page-btn">‹</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">…</button>
+                        <button class="page-btn">24</button>
+                        <button class="page-btn">›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FICHA DE CLIENTE
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-clientes-ficha">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text">
+                    <strong>Vet Central</strong>
+                    <span>Gestión de Clientes</span>
+                </div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')">
+                <span class="nav-icon">👥</span> Listado
+                <span class="nav-badge">142</span>
+            </button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')">
+                <span class="nav-icon">➕</span> Alta de cliente
+            </button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item">
+                <span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">📊</span> Informes
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">🔍</span> Búsqueda avanzada
+            </button>
+            <button class="nav-item" onclick="goTo('citas-listado')">
+                <span class="nav-icon">📅</span> Citas
+                <span class="nav-badge">5</span>
+            </button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info">
+                        <strong>Laura Martín</strong>
+                        <span>Auxiliar clínica</span>
+                    </div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Ficha de cliente</h1>
+                    <p>Vista completa del propietario y sus mascotas</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-listado')">← Volver al listado</button>
+                    <button class="btn btn-ghost btn-sm" onclick="goTo('clientes-editar')">✏️ Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="goTo('clientes-baja')">⛔ Dar de baja</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="breadcrumb">
+                    <button onclick="goTo('clientes-listado')">Clientes</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>Marta Pérez Ruiz</span>
+                </div>
+
+                <div class="detail-grid">
+                    <!-- Columna principal -->
+                    <div>
+                        <!-- Tabs -->
+                        <div class="tabs">
+                            <button class="tab-btn active" onclick="switchTab(this,'tab-datos')">Datos personales</button>
+                            <button class="tab-btn" onclick="switchTab(this,'tab-mascotas')">Mascotas (2)</button>
+                            <button class="tab-btn" onclick="switchTab(this,'tab-historial')">Historial de visitas</button>
+                            <button class="tab-btn" onclick="switchTab(this,'tab-pagos')">Facturación</button>
+                        </div>
+
+                        <!-- TAB: Datos personales -->
+                        <div class="tab-pane active" id="tab-datos">
+                            <div class="form-section">
+                                <div class="form-section-title">Información personal</div>
+                                <div class="form-row form-row-2">
+                                    <div>
+                                        <div class="form-label">Nombre completo</div>
+                                        <div style="font-size:.95rem;font-weight:600;padding:.5rem 0;">Marta Pérez Ruiz</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">DNI / NIF</div>
+                                        <div style="font-size:.95rem;font-weight:600;padding:.5rem 0;">48.712.344-K</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Fecha de nacimiento</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">14 de marzo de 1985</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Género</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">Mujer</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <div class="form-section-title">Contacto</div>
+                                <div class="form-row form-row-2">
+                                    <div>
+                                        <div class="form-label">Teléfono principal</div>
+                                        <div style="font-size:.95rem;font-weight:600;padding:.5rem 0;">612 345 678</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Teléfono alternativo</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">—</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Correo electrónico</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">marta.perez@email.com</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Preferencia de contacto</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;"><span class="badge badge-blue">WhatsApp</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <div class="form-section-title">Domicilio</div>
+                                <div class="form-row form-row-3">
+                                    <div style="grid-column:1/-1">
+                                        <div class="form-label">Dirección</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">Calle Mayor, 14, 2.º A</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Localidad</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">Madrid</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Provincia</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">Madrid</div>
+                                    </div>
+                                    <div>
+                                        <div class="form-label">Código postal</div>
+                                        <div style="font-size:.95rem;padding:.5rem 0;">28013</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <div class="form-section-title">Notas internas <span>Solo personal</span></div>
+                                <p style="font-size:.88rem;color:var(--ink-2);line-height:1.6;">
+                                    Clienta con dos perras (Luna y Kira). Siempre solicita al Dr. García. Prefiere citas de mañana antes de las 11h. Alergias conocidas de Luna al ibuprofeno.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Mascotas -->
+                        <div class="tab-pane" id="tab-mascotas">
+                            <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.25rem;">
+                                <div class="pet-card">
+                                    <div class="pet-icon">🐕</div>
+                                    <div class="pet-info">
+                                        <strong>Luna</strong>
+                                        <span>Golden Retriever · 4 años · Hembra · Chip: 724 010 1234567</span>
+                                    </div>
+                                    <div style="display:flex;gap:.5rem;">
+                                        <span class="badge badge-green">Vacunas al día</span>
+                                        <button class="btn btn-secondary btn-sm">Ver historial</button>
+                                    </div>
+                                </div>
+                                <div class="pet-card">
+                                    <div class="pet-icon">🐕‍🦺</div>
+                                    <div class="pet-info">
+                                        <strong>Kira</strong>
+                                        <span>Mestiza · 6 años · Hembra · Chip: 724 010 9876543</span>
+                                    </div>
+                                    <div style="display:flex;gap:.5rem;">
+                                        <span class="badge badge-amber">Revisión pendiente</span>
+                                        <button class="btn btn-secondary btn-sm">Ver historial</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-ghost btn-sm">➕ Registrar nueva mascota</button>
+                        </div>
+
+                        <!-- TAB: Historial -->
+                        <div class="tab-pane" id="tab-historial">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-date">14 abr<br>2026</div>
+                                    <div class="timeline-content">
+                                        <h4>Revisión general — Luna</h4>
+                                        <p>Consulta de seguimiento. Sin anomalías. Vacuna polivalente administrada. Próxima revisión en 12 meses.</p>
+                                        <div style="margin-top:.5rem;display:flex;gap:.5rem;">
+                                            <span class="badge badge-green">Completada</span>
+                                            <span class="badge badge-gray">Dr. García</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">28 ene<br>2026</div>
+                                    <div class="timeline-content">
+                                        <h4>Consulta urgente — Kira</h4>
+                                        <p>Ingesta accidental de objeto extraño. Resolución conservadora. Dieta blanda 5 días. Seguimiento telefónico a los 3 días.</p>
+                                        <div style="margin-top:.5rem;display:flex;gap:.5rem;">
+                                            <span class="badge badge-green">Completada</span>
+                                            <span class="badge badge-gray">Dra. Molina</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">05 sep<br>2025</div>
+                                    <div class="timeline-content">
+                                        <h4>Vacunación anual — Luna</h4>
+                                        <p>Vacuna antirrábica y polivalente. Sin incidencias. Pasaporte actualizado.</p>
+                                        <div style="margin-top:.5rem;display:flex;gap:.5rem;">
+                                            <span class="badge badge-green">Completada</span>
+                                            <span class="badge badge-gray">Dr. García</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Facturación -->
+                        <div class="tab-pane" id="tab-pagos">
+                            <div class="alert alert-info">
+                                ℹ️ El historial de pagos completo está disponible en el módulo de Facturación.
+                            </div>
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Nº factura</th>
+                                        <th>Fecha</th>
+                                        <th>Concepto</th>
+                                        <th>Importe</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>F-2026-0412</td>
+                                        <td>14 abr 2026</td>
+                                        <td>Revisión + vacuna polivalente</td>
+                                        <td><strong>68,00 €</strong></td>
+                                        <td><span class="badge badge-green">Pagado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>F-2026-0089</td>
+                                        <td>28 ene 2026</td>
+                                        <td>Consulta urgente — Kira</td>
+                                        <td><strong>95,50 €</strong></td>
+                                        <td><span class="badge badge-green">Pagado</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>F-2025-0721</td>
+                                        <td>05 sep 2025</td>
+                                        <td>Vacunación anual — Luna</td>
+                                        <td><strong>42,00 €</strong></td>
+                                        <td><span class="badge badge-green">Pagado</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar de detalle -->
+                    <div>
+                        <div class="detail-sidebar-card">
+                            <div class="detail-sidebar-header">
+                                <div class="detail-avatar-lg female">MP</div>
+                                <h2>Marta Pérez Ruiz</h2>
+                                <p>Cliente desde enero 2022</p>
+                                <div style="margin-top:.75rem;">
+                                    <span class="badge badge-green"><span class="badge-dot"></span> Activo</span>
+                                </div>
+                            </div>
+                            <div class="detail-info-list">
+                                <div class="detail-info-row">
+                                    <span class="key">Nº cliente</span>
+                                    <span class="val">#CLT-00041</span>
+                                </div>
+                                <div class="detail-info-row">
+                                    <span class="key">Mascotas</span>
+                                    <span class="val">2 registradas</span>
+                                </div>
+                                <div class="detail-info-row">
+                                    <span class="key">Visitas totales</span>
+                                    <span class="val">18 consultas</span>
+                                </div>
+                                <div class="detail-info-row">
+                                    <span class="key">Última visita</span>
+                                    <span class="val">14 abr 2026</span>
+                                </div>
+                                <div class="detail-info-row">
+                                    <span class="key">Próxima cita</span>
+                                    <span class="val" style="color:var(--accent-2);">22 abr 2026</span>
+                                </div>
+                                <div class="detail-info-row">
+                                    <span class="key">Facturación total</span>
+                                    <span class="val">1.240,50 €</span>
+                                </div>
+                                <div class="detail-info-row">
+                                    <span class="key">Saldo pendiente</span>
+                                    <span class="val" style="color:var(--green);">0,00 €</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.6rem;">
+                            <button class="btn btn-primary" style="width:100%;">📅 Crear cita</button>
+                            <button class="btn btn-secondary" style="width:100%;" onclick="goTo('clientes-editar')">✏️ Editar datos</button>
+                            <button class="btn btn-danger" style="width:100%;" onclick="goTo('clientes-baja')">⛔ Dar de baja</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+      ALTA DE CLIENTE
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-clientes-nuevo">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text">
+                    <strong>Vet Central</strong>
+                    <span>Gestión de Clientes</span>
+                </div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')"><span class="nav-icon">👥</span> Listado <span class="nav-badge">142</span></button>
+            <button class="nav-item active" onclick="goTo('clientes-nuevo')"><span class="nav-icon">➕</span> Alta de cliente</button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item"><span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span></button>
+            <button class="nav-item"><span class="nav-icon">📊</span> Informes</button>
+            <button class="nav-item"><span class="nav-icon">🔍</span> Búsqueda avanzada</button>
+            <button class="nav-item" onclick="goTo('citas-listado')"><span class="nav-icon">📅</span> Citas <span class="nav-badge">5</span></button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info"><strong>Laura Martín</strong><span>Auxiliar clínica</span></div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Alta de cliente</h1>
+                    <p>Registrar un nuevo propietario en el sistema</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-listado')">← Cancelar</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="breadcrumb">
+                    <button onclick="goTo('clientes-listado')">Clientes</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>Nuevo cliente</span>
+                </div>
+
+                <div class="alert alert-info">
+                    ℹ️ Los campos marcados con * son obligatorios. El número de cliente se asignará automáticamente al guardar.
+                </div>
+
+                <div style="max-width:760px;">
+                    <!-- Sección 1: Datos personales -->
+                    <div class="form-section">
+                        <div class="form-section-title">Datos personales</div>
+                        <div class="form-row form-row-2">
+                            <div>
+                                <label class="form-label">Nombre *</label>
+                                <input class="form-control" placeholder="Ej: Marta" />
+                            </div>
+                            <div>
+                                <label class="form-label">Apellidos *</label>
+                                <input class="form-control" placeholder="Ej: Pérez Ruiz" />
+                            </div>
+                            <div>
+                                <label class="form-label">DNI / NIF / NIE *</label>
+                                <input class="form-control" placeholder="Ej: 48.712.344-K" />
+                            </div>
+                            <div>
+                                <label class="form-label">Fecha de nacimiento</label>
+                                <input class="form-control" type="date" />
+                            </div>
+                            <div>
+                                <label class="form-label">Género</label>
+                                <select class="form-select">
+                                    <option value="">— Seleccionar —</option>
+                                    <option>Mujer</option>
+                                    <option>Hombre</option>
+                                    <option>Prefiere no indicar</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Idioma de comunicación</label>
+                                <select class="form-select">
+                                    <option>Español</option>
+                                    <option>Inglés</option>
+                                    <option>Catalán</option>
+                                    <option>Otro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 2: Contacto -->
+                    <div class="form-section">
+                        <div class="form-section-title">Datos de contacto</div>
+                        <div class="form-row form-row-2">
+                            <div>
+                                <label class="form-label">Teléfono principal *</label>
+                                <input class="form-control" placeholder="Ej: 612 345 678" type="tel" />
+                            </div>
+                            <div>
+                                <label class="form-label">Teléfono alternativo</label>
+                                <input class="form-control" placeholder="Opcional" type="tel" />
+                            </div>
+                            <div style="grid-column:1/-1">
+                                <label class="form-label">Correo electrónico *</label>
+                                <input class="form-control" placeholder="Ej: marta@email.com" type="email" />
+                                <p class="form-hint">Se usará para confirmaciones de cita y facturas.</p>
+                            </div>
+                            <div>
+                                <label class="form-label">Preferencia de contacto</label>
+                                <select class="form-select">
+                                    <option>Teléfono</option>
+                                    <option>WhatsApp</option>
+                                    <option>Email</option>
+                                    <option>SMS</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Horario preferido de contacto</label>
+                                <select class="form-select">
+                                    <option>Mañanas (9–13h)</option>
+                                    <option>Tardes (16–20h)</option>
+                                    <option>Cualquier hora</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 3: Domicilio -->
+                    <div class="form-section">
+                        <div class="form-section-title">Domicilio</div>
+                        <div class="form-row form-row-2">
+                            <div style="grid-column:1/-1">
+                                <label class="form-label">Dirección (calle, número, piso) *</label>
+                                <input class="form-control" placeholder="Ej: Calle Mayor, 14, 2.º A" />
+                            </div>
+                            <div>
+                                <label class="form-label">Localidad *</label>
+                                <input class="form-control" placeholder="Ej: Madrid" />
+                            </div>
+                            <div>
+                                <label class="form-label">Provincia *</label>
+                                <input class="form-control" placeholder="Ej: Madrid" />
+                            </div>
+                            <div>
+                                <label class="form-label">Código postal *</label>
+                                <input class="form-control" placeholder="Ej: 28013" maxlength="5" />
+                            </div>
+                            <div>
+                                <label class="form-label">País</label>
+                                <select class="form-select">
+                                    <option>España</option>
+                                    <option>Portugal</option>
+                                    <option>Otro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 4: Datos clínicos -->
+                    <div class="form-section">
+                        <div class="form-section-title">Preferencias clínicas <span>Opcional</span></div>
+                        <div class="form-row form-row-2">
+                            <div>
+                                <label class="form-label">Veterinario asignado</label>
+                                <select class="form-select">
+                                    <option value="">— Sin asignar —</option>
+                                    <option>Dr. García</option>
+                                    <option>Dra. Molina</option>
+                                    <option>Dr. Herrero</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Cómo nos conoció</label>
+                                <select class="form-select">
+                                    <option value="">— Seleccionar —</option>
+                                    <option>Recomendación</option>
+                                    <option>Google / Internet</option>
+                                    <option>Redes sociales</option>
+                                    <option>Cerca de casa</option>
+                                    <option>Otro</option>
+                                </select>
+                            </div>
+                            <div style="grid-column:1/-1">
+                                <label class="form-label">Notas internas</label>
+                                <textarea class="form-control" placeholder="Observaciones relevantes para el equipo (no visibles al cliente)…"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 5: Consentimientos -->
+                    <div class="form-section">
+                        <div class="form-section-title">Consentimientos y privacidad</div>
+                        <div style="display:flex;flex-direction:column;gap:.9rem;">
+                            <label style="display:flex;align-items:flex-start;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="checkbox" style="margin-top:.18rem;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;" checked />
+                                <span>El cliente ha leído y acepta la <strong>Política de Privacidad</strong> y el tratamiento de sus datos conforme al RGPD.</span>
+                            </label>
+                            <label style="display:flex;align-items:flex-start;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="checkbox" style="margin-top:.18rem;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;" />
+                                <span>Acepta recibir comunicaciones comerciales y recordatorios de cita por email / WhatsApp.</span>
+                            </label>
+                            <label style="display:flex;align-items:flex-start;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="checkbox" style="margin-top:.18rem;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;" checked />
+                                <span>Autoriza el intercambio de historial clínico entre los veterinarios de la clínica.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div style="display:flex;justify-content:flex-end;gap:.75rem;padding:.5rem 0 2rem;">
+                        <button class="btn btn-secondary" onclick="goTo('clientes-listado')">Cancelar</button>
+                        <button class="btn btn-ghost">Guardar borrador</button>
+                        <button class="btn btn-primary btn-lg" onclick="goTo('clientes-confirmacion')">✓ Registrar cliente</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. EDITAR CLIENTE
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-clientes-editar">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text"><strong>Vet Central</strong><span>Gestión de Clientes</span></div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')"><span class="nav-icon">👥</span> Listado <span class="nav-badge">142</span></button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')"><span class="nav-icon">➕</span> Alta de cliente</button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item"><span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span></button>
+            <button class="nav-item"><span class="nav-icon">📊</span> Informes</button>
+            <button class="nav-item"><span class="nav-icon">🔍</span> Búsqueda avanzada</button>
+            <button class="nav-item" onclick="goTo('citas-listado')"><span class="nav-icon">📅</span> Citas <span class="nav-badge">5</span></button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info"><strong>Laura Martín</strong><span>Auxiliar clínica</span></div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Editar cliente</h1>
+                    <p>Modificar los datos de Marta Pérez Ruiz · #CLT-00041</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-ficha')">← Cancelar</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="breadcrumb">
+                    <button onclick="goTo('clientes-listado')">Clientes</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <button onclick="goTo('clientes-ficha')">Marta Pérez Ruiz</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>Editar</span>
+                </div>
+
+                <div class="alert alert-warning">
+                    ⚠️ Los cambios en el DNI y la fecha de nacimiento quedan registrados en el log de auditoría con fecha y usuario.
+                </div>
+
+                <div style="max-width:760px;">
+                    <div class="form-section">
+                        <div class="form-section-title">Datos personales</div>
+                        <div class="form-row form-row-2">
+                            <div>
+                                <label class="form-label">Nombre *</label>
+                                <input class="form-control" value="Marta" />
+                            </div>
+                            <div>
+                                <label class="form-label">Apellidos *</label>
+                                <input class="form-control" value="Pérez Ruiz" />
+                            </div>
+                            <div>
+                                <label class="form-label">DNI / NIF / NIE *</label>
+                                <input class="form-control" value="48.712.344-K" />
+                            </div>
+                            <div>
+                                <label class="form-label">Fecha de nacimiento</label>
+                                <input class="form-control" type="date" value="1985-03-14" />
+                            </div>
+                            <div>
+                                <label class="form-label">Género</label>
+                                <select class="form-select">
+                                    <option selected>Mujer</option>
+                                    <option>Hombre</option>
+                                    <option>Prefiere no indicar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Datos de contacto</div>
+                        <div class="form-row form-row-2">
+                            <div>
+                                <label class="form-label">Teléfono principal *</label>
+                                <input class="form-control" value="612 345 678" type="tel" />
+                            </div>
+                            <div>
+                                <label class="form-label">Teléfono alternativo</label>
+                                <input class="form-control" placeholder="Opcional" type="tel" />
+                            </div>
+                            <div style="grid-column:1/-1">
+                                <label class="form-label">Correo electrónico *</label>
+                                <input class="form-control" value="marta.perez@email.com" type="email" />
+                            </div>
+                            <div>
+                                <label class="form-label">Preferencia de contacto</label>
+                                <select class="form-select">
+                                    <option>Teléfono</option>
+                                    <option selected>WhatsApp</option>
+                                    <option>Email</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Domicilio</div>
+                        <div class="form-row form-row-2">
+                            <div style="grid-column:1/-1">
+                                <label class="form-label">Dirección *</label>
+                                <input class="form-control" value="Calle Mayor, 14, 2.º A" />
+                            </div>
+                            <div>
+                                <label class="form-label">Localidad *</label>
+                                <input class="form-control" value="Madrid" />
+                            </div>
+                            <div>
+                                <label class="form-label">Código postal *</label>
+                                <input class="form-control" value="28013" maxlength="5" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Notas internas</div>
+                        <textarea class="form-control" rows="4">Clienta con dos perras (Luna y Kira). Siempre solicita al Dr. García. Prefiere citas de mañana antes de las 11h. Alergias conocidas de Luna al ibuprofeno.</textarea>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:.75rem;padding:.5rem 0 2rem;">
+                        <button class="btn btn-secondary" onclick="goTo('clientes-ficha')">Cancelar</button>
+                        <button class="btn btn-primary btn-lg" onclick="goTo('clientes-ficha')">✓ Guardar cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. CONFIRMACIÓN DE ALTA
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-clientes-confirmacion">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text"><strong>Vet Central</strong><span>Gestión de Clientes</span></div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')"><span class="nav-icon">👥</span> Listado <span class="nav-badge">143</span></button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')"><span class="nav-icon">➕</span> Alta de cliente</button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item"><span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span></button>
+            <button class="nav-item"><span class="nav-icon">📊</span> Informes</button>
+            <button class="nav-item"><span class="nav-icon">🔍</span> Búsqueda avanzada</button>
+            <button class="nav-item" onclick="goTo('citas-listado')"><span class="nav-icon">📅</span> Citas <span class="nav-badge">5</span></button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info"><strong>Laura Martín</strong><span>Auxiliar clínica</span></div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Alta completada</h1>
+                    <p>El cliente ha sido registrado correctamente en el sistema</p>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="confirm-wrap">
+                    <div class="confirm-icon success" style="text-align:center;">✅</div>
+                    <div class="confirm-title">Cliente registrado</div>
+                    <p class="confirm-sub" style="margin:0 auto 1.75rem;">El nuevo propietario ha sido dado de alta en el sistema. Puedes continuar registrando su mascota o volver al listado.</p>
+
+                    <div class="confirm-summary">
+                        <div class="confirm-row">
+                            <span class="key">Nº cliente asignado</span>
+                            <span class="val">#CLT-00143</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="key">Nombre</span>
+                            <span class="val">Marta Pérez Ruiz</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="key">DNI</span>
+                            <span class="val">48.712.344-K</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="key">Teléfono</span>
+                            <span class="val">612 345 678</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="key">Email</span>
+                            <span class="val">marta.perez@email.com</span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="key">Estado</span>
+                            <span class="val"><span class="badge badge-green">Activo</span></span>
+                        </div>
+                        <div class="confirm-row">
+                            <span class="key">Registrado por</span>
+                            <span class="val">Laura Martín · 16/04/2026 10:42</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:.75rem;">
+                        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">🐾 Registrar mascota</button>
+                        <button class="btn btn-secondary" style="width:100%;justify-content:center;" onclick="goTo('clientes-ficha')">Ver ficha del cliente</button>
+                        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="goTo('clientes-nuevo')">➕ Registrar otro cliente</button>
+                        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="goTo('clientes-listado')">← Volver al listado</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     6. DAR DE BAJA
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-clientes-baja">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text"><strong>Vet Central</strong><span>Gestión de Clientes</span></div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')"><span class="nav-icon">👥</span> Listado <span class="nav-badge">142</span></button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')"><span class="nav-icon">➕</span> Alta de cliente</button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item"><span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span></button>
+            <button class="nav-item"><span class="nav-icon">📊</span> Informes</button>
+            <button class="nav-item"><span class="nav-icon">🔍</span> Búsqueda avanzada</button>
+            <button class="nav-item" onclick="goTo('citas-listado')"><span class="nav-icon">📅</span> Citas <span class="nav-badge">5</span></button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info"><strong>Laura Martín</strong><span>Auxiliar clínica</span></div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Dar de baja</h1>
+                    <p>Desactivar el acceso y marcar al cliente como inactivo</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm" onclick="goTo('clientes-ficha')">← Cancelar</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="breadcrumb">
+                    <button onclick="goTo('clientes-listado')">Clientes</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <button onclick="goTo('clientes-ficha')">Marta Pérez Ruiz</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>Dar de baja</span>
+                </div>
+
+                <div style="max-width:600px;">
+                    <div class="alert alert-warning" style="margin-bottom:1.5rem;">
+                        ⚠️ <strong>Acción irreversible desde el portal.</strong> El cliente pasará a estado "Baja" y no podrá iniciar sesión. Sus datos e historial clínico quedan conservados. Solo un administrador puede reactivarlo.
+                    </div>
+
+                    <!-- Resumen del cliente -->
+                    <div class="card" style="margin-bottom:1.25rem;">
+                        <div class="card-body">
+                            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem;padding-bottom:1rem;border-bottom:1px solid var(--line);">
+                                <div class="client-avatar female" style="width:48px;height:48px;font-size:1.1rem;">MP</div>
+                                <div>
+                                    <div style="font-weight:700;font-size:1rem;">Marta Pérez Ruiz</div>
+                                    <div style="font-size:.83rem;color:var(--ink-3);">#CLT-00041 · 2 mascotas · Cliente desde 2022</div>
+                                </div>
+                                <span class="badge badge-green" style="margin-left:auto;"><span class="badge-dot"></span> Activo</span>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;font-size:.86rem;">
+                                <div><span style="color:var(--ink-3);">Visitas totales:</span> <strong>18</strong></div>
+                                <div><span style="color:var(--ink-3);">Última visita:</span> <strong>14 abr 2026</strong></div>
+                                <div><span style="color:var(--ink-3);">Saldo pendiente:</span> <strong style="color:var(--green);">0,00 €</strong></div>
+                                <div><span style="color:var(--ink-3);">Citas futuras:</span> <strong style="color:var(--amber);">1 pendiente</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Motivo de la baja *</div>
+                        <div style="display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.1rem;">
+                            <label style="display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="radio" name="motivo-baja" style="accent-color:var(--accent);width:16px;height:16px;" checked />
+                                <span>El cliente ha solicitado la baja voluntariamente</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="radio" name="motivo-baja" style="accent-color:var(--accent);width:16px;height:16px;" />
+                                <span>Duplicado — ya existe otro registro con los mismos datos</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="radio" name="motivo-baja" style="accent-color:var(--accent);width:16px;height:16px;" />
+                                <span>Fallecimiento</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="radio" name="motivo-baja" style="accent-color:var(--accent);width:16px;height:16px;" />
+                                <span>Otro motivo</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="form-label">Observaciones adicionales</label>
+                            <textarea class="form-control" rows="3" placeholder="Detalla cualquier información relevante para el registro de auditoría…"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" style="background:var(--accent-soft);border-color:rgba(192,57,43,.2);">
+                        <label style="display:flex;align-items:flex-start;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                            <input type="checkbox" style="margin-top:.18rem;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0;" />
+                            <span>Confirmo que he verificado la identidad del solicitante y que esta baja es correcta. Entiendo que la acción quedará registrada bajo mi usuario.</span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:.75rem;padding:.5rem 0 2rem;">
+                        <button class="btn btn-secondary" onclick="goTo('clientes-ficha')">Cancelar</button>
+                        <button class="btn btn-danger btn-lg" onclick="goTo('clientes-listado')">⛔ Confirmar baja</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════ -->
+<script>
+    const STORAGE_KEY = "vc-clientes-screen";
+
+    function goTo(name) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      const target = document.getElementById("screen-" + name);
+      if (target) {
+        target.classList.add("active");
+        window.scrollTo({ top: 0, behavior: "auto" });
+        localStorage.setItem(STORAGE_KEY, name);
+        document.getElementById("screenNav").value = name;
+      }
+    }
+
+    function switchTab(btn, paneId) {
+      const container = btn.closest(".workspace");
+      container.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      container.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      const pane = document.getElementById(paneId);
+      if (pane) pane.classList.add("active");
+    }
+
+    function setChip(chip) {
+      chip.closest(".filter-chips").querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+    }
+
+    // Restore last screen
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) goTo(saved);
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     7. CITAS
+═══════════════════════════════════════════════════════════ -->
+<style>
+    .cita-row-hoy { background: #fffdf5 !important; }
+    .time-badge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-size: .82rem; font-weight: 700; color: var(--ink-2);
+      background: var(--paper-2); padding: .22rem .6rem;
+      border-radius: 6px; white-space: nowrap;
+    }
+    .cita-avatar {
+      width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: .95rem;
+      background: var(--paper-2);
+    }
+    .nueva-cita-form { max-width: 760px; }
+</style>
+
+<div class="screen" id="screen-citas-listado">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text">
+                    <strong>Vet Central</strong>
+                    <span>Gestión de Clientes</span>
+                </div>
+            </button>
+
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')">
+                <span class="nav-icon">👥</span> Listado
+                <span class="nav-badge">142</span>
+            </button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')">
+                <span class="nav-icon">➕</span> Alta de cliente
+            </button>
+
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')">
+                <span class="nav-icon">🔔</span> Alertas
+                <span class="nav-badge">3</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">📊</span> Informes
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">🔍</span> Búsqueda avanzada
+            </button>
+            <button class="nav-item active" onclick="goTo('citas-listado')">
+                <span class="nav-icon">📅</span> Citas
+                <span class="nav-badge">5</span>
+            </button>
+
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info">
+                        <strong>Laura Martín</strong>
+                        <span>Auxiliar clínica</span>
+                    </div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <!-- Workspace -->
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Citas</h1>
+                    <p>Agenda y gestión de consultas programadas</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm">⬇ Exportar</button>
+                    <button class="btn btn-primary" onclick="goTo('citas-nueva')">📅 Nueva cita</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+
+                <!-- Stats -->
+                <div class="stats-row">
+                    <div class="stat-card stat-blue">
+                        <div class="stat-label">Citas hoy</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-sub">Lunes, 20 abr 2026</div>
+                    </div>
+                    <div class="stat-card stat-green">
+                        <div class="stat-label">Confirmadas</div>
+                        <div class="stat-value">9</div>
+                        <div class="stat-sub">De las citas de hoy</div>
+                    </div>
+                    <div class="stat-card stat-amber">
+                        <div class="stat-label">Pendientes</div>
+                        <div class="stat-value">5</div>
+                        <div class="stat-sub">Sin confirmar esta semana</div>
+                    </div>
+                    <div class="stat-card stat-accent">
+                        <div class="stat-label">Esta semana</div>
+                        <div class="stat-value">38</div>
+                        <div class="stat-sub">+4 respecto a la anterior</div>
+                    </div>
+                </div>
+
+                <!-- Search + filtros -->
+                <div class="search-bar">
+                    <div class="input-group" style="flex:1;min-width:220px;">
+                        <span class="input-group-icon">🔍</span>
+                        <input class="form-control" placeholder="Buscar por cliente, mascota o veterinario…" />
+                    </div>
+                    <select class="form-select" style="width:auto;">
+                        <option>Todos los veterinarios</option>
+                        <option>Dr. García</option>
+                        <option>Dra. Molina</option>
+                        <option>Dr. Torres</option>
+                    </select>
+                    <input class="form-control" type="date" value="2026-04-20" style="width:auto;" />
+                </div>
+
+                <div class="filter-chips">
+                    <button class="chip active" onclick="setChip(this)">Todas</button>
+                    <button class="chip" onclick="setChip(this)">Hoy</button>
+                    <button class="chip" onclick="setChip(this)">Esta semana</button>
+                    <button class="chip" onclick="setChip(this)">Pendientes</button>
+                    <button class="chip" onclick="setChip(this)">Confirmadas</button>
+                    <button class="chip" onclick="setChip(this)">En curso</button>
+                    <button class="chip" onclick="setChip(this)">Canceladas</button>
+                </div>
+
+                <!-- Tabla -->
+                <div class="table-wrap">
+                    <div class="table-header">
+                        <span class="table-title">📅 Agenda del día · 20 abr 2026</span>
+                        <span style="font-size:.82rem;color:var(--ink-3);">12 citas · Mostrando 1–8</span>
+                    </div>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Cliente / Mascota</th>
+                            <th>Motivo</th>
+                            <th>Veterinario</th>
+                            <th>Estado</th>
+                            <th class="td-actions">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="cita-row-hoy">
+                            <td><span class="time-badge">🕘 09:00</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐕</div>
+                                    <div>
+                                        <strong>Luna</strong>
+                                        <div class="secondary">Marta Pérez Ruiz · #CLT-00041</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Revisión anual</strong>
+                                <div class="secondary">Vacunación + desparasitación</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dr. García</span></td>
+                            <td><span class="badge badge-green"><span class="badge-dot"></span>Confirmada</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-badge">🕙 10:00</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐈</div>
+                                    <div>
+                                        <strong>Misu</strong>
+                                        <div class="secondary">Carlos Ruiz Vega · #CLT-00078</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Urgencia digestiva</strong>
+                                <div class="secondary">Vómitos recurrentes desde ayer</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dra. Molina</span></td>
+                            <td><span class="badge badge-green"><span class="badge-dot"></span>Confirmada</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-badge">🕙 10:30</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐇</div>
+                                    <div>
+                                        <strong>Copito</strong>
+                                        <div class="secondary">Ana Fernández Gil · #CLT-00103</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Revisión postoperatoria</strong>
+                                <div class="secondary">Seguimiento castración (7 días)</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dr. Torres</span></td>
+                            <td><span class="badge badge-amber"><span class="badge-dot"></span>Pendiente</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-badge">🕚 11:00</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐕</div>
+                                    <div>
+                                        <strong>Rocky</strong>
+                                        <div class="secondary">Luis Navarro Sanz · #CLT-00022</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Dermatología</strong>
+                                <div class="secondary">Alergia cutánea recurrente</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dra. Molina</span></td>
+                            <td><span class="badge badge-blue"><span class="badge-dot"></span>En curso</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-badge">🕛 12:00</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐕‍🦺</div>
+                                    <div>
+                                        <strong>Kira</strong>
+                                        <div class="secondary">Marta Pérez Ruiz · #CLT-00041</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Consulta general</strong>
+                                <div class="secondary">Pérdida de apetito</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dr. García</span></td>
+                            <td><span class="badge badge-amber"><span class="badge-dot"></span>Pendiente</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-badge">🕐 13:00</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐈</div>
+                                    <div>
+                                        <strong>Nala</strong>
+                                        <div class="secondary">Sofía Blanco Ortiz · #CLT-00055</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Microchip + vacuna rabia</strong>
+                                <div class="secondary">Primera visita</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dr. García</span></td>
+                            <td><span class="badge badge-green"><span class="badge-dot"></span>Confirmada</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-badge">🕔 16:00</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐕</div>
+                                    <div>
+                                        <strong>Toby</strong>
+                                        <div class="secondary">Javier González López · #CLT-00067</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Ortopedia</strong>
+                                <div class="secondary">Cojera tren trasero</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dr. Torres</span></td>
+                            <td><span class="badge badge-red"><span class="badge-dot"></span>Cancelada</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-badge">🕔 17:00</span></td>
+                            <td>
+                                <div class="client-with-avatar">
+                                    <div class="cita-avatar">🐈</div>
+                                    <div>
+                                        <strong>Whiskers</strong>
+                                        <div class="secondary">Carmen López Díaz · #CLT-00091</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Revisión oftalmológica</strong>
+                                <div class="secondary">Seguimiento úlcera corneal</div>
+                            </td>
+                            <td><span style="font-size:.85rem;">Dra. Molina</span></td>
+                            <td><span class="badge badge-green"><span class="badge-dot"></span>Confirmada</span></td>
+                            <td class="td-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="goTo('citas-ficha')">Ver</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span class="page-info">Mostrando 1–8 de 12</span>
+                        <button class="page-btn">‹</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">›</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+    FICHA DE CITA
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-citas-ficha">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text">
+                    <strong>Vet Central</strong>
+                    <span>Gestión de Clientes</span>
+                </div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')"><span class="nav-icon">👥</span> Listado <span class="nav-badge">142</span></button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')"><span class="nav-icon">➕</span> Alta de cliente</button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item"><span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span></button>
+            <button class="nav-item"><span class="nav-icon">📊</span> Informes</button>
+            <button class="nav-item"><span class="nav-icon">🔍</span> Búsqueda avanzada</button>
+            <button class="nav-item active" onclick="goTo('citas-listado')"><span class="nav-icon">📅</span> Citas <span class="nav-badge">5</span></button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info"><strong>Laura Martín</strong><span>Auxiliar clínica</span></div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Detalle de cita</h1>
+                    <p>Revisión anual · Luna · 20 abr 2026 a las 09:00</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm" onclick="goTo('citas-listado')">← Volver a citas</button>
+                    <button class="btn btn-ghost btn-sm">✏️ Editar</button>
+                    <button class="btn btn-danger btn-sm">⛔ Cancelar cita</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="breadcrumb">
+                    <button onclick="goTo('citas-listado')">Citas</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>CIT-00298 · Luna · 20 abr 2026</span>
+                </div>
+
+                <div class="detail-grid">
+                    <!-- Columna principal -->
+                    <div>
+                        <div class="form-section">
+                            <div class="form-section-title">Información de la cita</div>
+                            <div class="form-row form-row-2">
+                                <div>
+                                    <div class="form-label">Nº cita</div>
+                                    <div style="font-size:.95rem;font-weight:600;padding:.5rem 0;">#CIT-00298</div>
+                                </div>
+                                <div>
+                                    <div class="form-label">Estado</div>
+                                    <div style="padding:.5rem 0;"><span class="badge badge-green"><span class="badge-dot"></span>Confirmada</span></div>
+                                </div>
+                                <div>
+                                    <div class="form-label">Fecha</div>
+                                    <div style="font-size:.95rem;font-weight:600;padding:.5rem 0;">Lunes, 20 de abril de 2026</div>
+                                </div>
+                                <div>
+                                    <div class="form-label">Hora</div>
+                                    <div style="font-size:.95rem;font-weight:600;padding:.5rem 0;">09:00 – 09:30 h</div>
+                                </div>
+                                <div>
+                                    <div class="form-label">Veterinario</div>
+                                    <div style="font-size:.95rem;padding:.5rem 0;">Dr. García</div>
+                                </div>
+                                <div>
+                                    <div class="form-label">Tipo de consulta</div>
+                                    <div style="padding:.5rem 0;"><span class="badge badge-blue">Revisión anual</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title">Motivo y notas previas</div>
+                            <p style="font-size:.9rem;color:var(--ink-2);line-height:1.65;">
+                                Revisión anual completa de Luna (Golden Retriever, 4 años). Incluye vacunación antirrábica y polivalente, desparasitación interna y externa, y toma de peso y temperatura. El propietario indica que la perra ha estado más cansada de lo habitual.
+                            </p>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title">Notas del veterinario <span>Post-consulta</span></div>
+                            <p style="font-size:.88rem;color:var(--ink-3);font-style:italic;">Sin notas registradas aún — la cita aún no ha tenido lugar.</p>
+                        </div>
+                    </div>
+
+                    <!-- Columna lateral -->
+                    <div>
+                        <div class="detail-sidebar-card" style="margin-bottom:1rem;">
+                            <div class="detail-sidebar-header">
+                                <div style="font-size:2rem;margin-bottom:.5rem;">🐕</div>
+                                <h2>Luna</h2>
+                                <p>Golden Retriever · 4 años · Hembra</p>
+                            </div>
+                            <div class="detail-info-list">
+                                <div class="detail-info-row"><span class="key">Chip</span><span class="val">724 010 1234567</span></div>
+                                <div class="detail-info-row"><span class="key">Peso</span><span class="val">26,4 kg</span></div>
+                                <div class="detail-info-row"><span class="key">Vacunas</span><span class="val"><span class="badge badge-green">Al día</span></span></div>
+                                <div class="detail-info-row"><span class="key">Última visita</span><span class="val">14 abr 2026</span></div>
+                            </div>
+                        </div>
+
+                        <div class="detail-sidebar-card" style="margin-bottom:1rem;">
+                            <div style="padding:1.1rem 1rem;border-bottom:1px solid var(--line);">
+                                <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:700;margin-bottom:.6rem;">Propietaria</div>
+                                <div style="display:flex;align-items:center;gap:.65rem;">
+                                    <div class="client-avatar female" style="width:36px;height:36px;font-size:.82rem;">MP</div>
+                                    <div>
+                                        <div style="font-weight:700;font-size:.9rem;">Marta Pérez Ruiz</div>
+                                        <div style="font-size:.78rem;color:var(--ink-3);">#CLT-00041</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-info-list">
+                                <div class="detail-info-row"><span class="key">Teléfono</span><span class="val">612 345 678</span></div>
+                                <div class="detail-info-row"><span class="key">Contacto</span><span class="val"><span class="badge badge-blue">WhatsApp</span></span></div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:.6rem;">
+                            <button class="btn btn-primary" style="width:100%;">✅ Marcar como atendida</button>
+                            <button class="btn btn-secondary" style="width:100%;" onclick="goTo('clientes-ficha')">👤 Ver ficha del cliente</button>
+                            <button class="btn btn-ghost" style="width:100%;" onclick="goTo('citas-nueva')">📅 Crear cita similar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+ NUEVA CITA
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-citas-nueva">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text">
+                    <strong>Vet Central</strong>
+                    <span>Gestión de Clientes</span>
+                </div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')"><span class="nav-icon">👥</span> Listado <span class="nav-badge">142</span></button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')"><span class="nav-icon">➕</span> Alta de cliente</button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item"><span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span></button>
+            <button class="nav-item"><span class="nav-icon">📊</span> Informes</button>
+            <button class="nav-item"><span class="nav-icon">🔍</span> Búsqueda avanzada</button>
+            <button class="nav-item active" onclick="goTo('citas-listado')"><span class="nav-icon">📅</span> Citas <span class="nav-badge">5</span></button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info"><strong>Laura Martín</strong><span>Auxiliar clínica</span></div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Nueva cita</h1>
+                    <p>Registrar una consulta en la agenda</p>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm" onclick="goTo('citas-listado')">← Cancelar</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="breadcrumb">
+                    <button onclick="goTo('citas-listado')">Citas</button>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>Nueva cita</span>
+                </div>
+
+                <div class="nueva-cita-form">
+
+                    <div class="form-section">
+                        <div class="form-section-title">Cliente y mascota</div>
+                        <div class="form-row form-row-2">
+                            <div>
+                                <label class="form-label">Cliente *</label>
+                                <div class="input-group">
+                                    <span class="input-group-icon">🔍</span>
+                                    <input class="form-control" placeholder="Buscar por nombre o DNI…" value="Marta Pérez Ruiz" />
+                                </div>
+                                <div class="form-hint">Selecciona un cliente existente</div>
+                            </div>
+                            <div>
+                                <label class="form-label">Mascota *</label>
+                                <select class="form-select">
+                                    <option>— Seleccionar mascota —</option>
+                                    <option selected>Luna (Golden Retriever, 4a)</option>
+                                    <option>Kira (Mestiza, 6a)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Fecha, hora y veterinario</div>
+                        <div class="form-row form-row-3">
+                            <div>
+                                <label class="form-label">Fecha *</label>
+                                <input class="form-control" type="date" value="2026-04-22" />
+                            </div>
+                            <div>
+                                <label class="form-label">Hora *</label>
+                                <select class="form-select">
+                                    <option>09:00</option>
+                                    <option>09:30</option>
+                                    <option selected>10:00</option>
+                                    <option>10:30</option>
+                                    <option>11:00</option>
+                                    <option>11:30</option>
+                                    <option>12:00</option>
+                                    <option>16:00</option>
+                                    <option>16:30</option>
+                                    <option>17:00</option>
+                                    <option>17:30</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Duración</label>
+                                <select class="form-select">
+                                    <option>15 min</option>
+                                    <option selected>30 min</option>
+                                    <option>45 min</option>
+                                    <option>60 min</option>
+                                </select>
+                            </div>
+                            <div style="grid-column:1/-1">
+                                <label class="form-label">Veterinario *</label>
+                                <select class="form-select">
+                                    <option selected>Dr. García</option>
+                                    <option>Dra. Molina</option>
+                                    <option>Dr. Torres</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Tipo de consulta y motivo</div>
+                        <div class="form-row form-row-2">
+                            <div>
+                                <label class="form-label">Tipo de consulta *</label>
+                                <select class="form-select">
+                                    <option>— Seleccionar —</option>
+                                    <option selected>Revisión anual</option>
+                                    <option>Urgencia</option>
+                                    <option>Revisión postoperatoria</option>
+                                    <option>Vacunación</option>
+                                    <option>Dermatología</option>
+                                    <option>Ortopedia</option>
+                                    <option>Oftalmología</option>
+                                    <option>Consulta general</option>
+                                    <option>Otra</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Estado inicial</label>
+                                <select class="form-select">
+                                    <option>Pendiente de confirmación</option>
+                                    <option selected>Confirmada</option>
+                                </select>
+                            </div>
+                            <div style="grid-column:1/-1">
+                                <label class="form-label">Motivo / notas previas</label>
+                                <textarea class="form-control" rows="3" placeholder="Describe el motivo de la visita o cualquier información relevante para el veterinario…">Revisión anual completa. Vacunación y desparasitación.</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Recordatorio al cliente</div>
+                        <div style="display:flex;flex-direction:column;gap:.75rem;">
+                            <label style="display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="checkbox" checked style="accent-color:var(--accent);width:16px;height:16px;" />
+                                <span>Enviar recordatorio por <strong>WhatsApp</strong> 24h antes de la cita</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.9rem;">
+                                <input type="checkbox" style="accent-color:var(--accent);width:16px;height:16px;" />
+                                <span>Enviar confirmación por <strong>email</strong> al registrar la cita</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:.75rem;padding:.5rem 0 2rem;">
+                        <button class="btn btn-secondary" onclick="goTo('citas-listado')">Cancelar</button>
+                        <button class="btn btn-primary btn-lg" onclick="goTo('citas-confirmacion')">📅 Registrar cita</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+      CONFIRMACIÓN DE CITA
+═══════════════════════════════════════════════════════════ -->
+<div class="screen" id="screen-citas-confirmacion">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <button class="sidebar-brand" onclick="goTo('clientes-listado')">
+                <div class="brand-mark">VC</div>
+                <div class="sidebar-brand-text">
+                    <strong>Vet Central</strong>
+                    <span>Gestión de Clientes</span>
+                </div>
+            </button>
+            <div class="sidebar-section-label">Clientes</div>
+            <button class="nav-item" onclick="goTo('clientes-listado')"><span class="nav-icon">👥</span> Listado <span class="nav-badge">142</span></button>
+            <button class="nav-item" onclick="goTo('clientes-nuevo')"><span class="nav-icon">➕</span> Alta de cliente</button>
+            <div class="sidebar-section-label">Operativa</div>
+            <button class="nav-item"><span class="nav-icon">🔔</span> Alertas <span class="nav-badge">3</span></button>
+            <button class="nav-item"><span class="nav-icon">📊</span> Informes</button>
+            <button class="nav-item"><span class="nav-icon">🔍</span> Búsqueda avanzada</button>
+            <button class="nav-item active" onclick="goTo('citas-listado')"><span class="nav-icon">📅</span> Citas <span class="nav-badge">6</span></button>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">LM</div>
+                    <div class="user-card-info"><strong>Laura Martín</strong><span>Auxiliar clínica</span></div>
+                </div>
+                <button class="btn-logout">Cerrar sesión</button>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Cita registrada</h1>
+                    <p>La cita ha sido añadida correctamente a la agenda</p>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="confirm-wrap">
+                    <div class="confirm-icon success" style="text-align:center;">📅</div>
+                    <div class="confirm-title">Cita registrada</div>
+                    <p class="confirm-sub" style="margin:0 auto 1.75rem;">La cita ha sido añadida a la agenda. Se enviará un recordatorio automático por WhatsApp 24h antes.</p>
+
+                    <div class="confirm-summary">
+                        <div class="confirm-row"><span class="key">Nº cita</span><span class="val">#CIT-00299</span></div>
+                        <div class="confirm-row"><span class="key">Cliente</span><span class="val">Marta Pérez Ruiz</span></div>
+                        <div class="confirm-row"><span class="key">Mascota</span><span class="val">Luna (Golden Retriever)</span></div>
+                        <div class="confirm-row"><span class="key">Fecha</span><span class="val">Miércoles, 22 abr 2026</span></div>
+                        <div class="confirm-row"><span class="key">Hora</span><span class="val">10:00 – 10:30 h</span></div>
+                        <div class="confirm-row"><span class="key">Veterinario</span><span class="val">Dr. García</span></div>
+                        <div class="confirm-row"><span class="key">Estado</span><span class="val"><span class="badge badge-green">Confirmada</span></span></div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:.75rem;">
+                        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="goTo('citas-ficha')">📋 Ver detalle de la cita</button>
+                        <button class="btn btn-secondary" style="width:100%;justify-content:center;" onclick="goTo('clientes-ficha')">👤 Ir a la ficha del cliente</button>
+                        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="goTo('citas-nueva')">📅 Registrar otra cita</button>
+                        <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="goTo('citas-listado')">← Volver a la agenda</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
