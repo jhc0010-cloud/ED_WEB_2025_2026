@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
+    // TODO FUNCION: Gestionar los accesos denegados y redirigir al usuario a la pagina de error adecuada.
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {

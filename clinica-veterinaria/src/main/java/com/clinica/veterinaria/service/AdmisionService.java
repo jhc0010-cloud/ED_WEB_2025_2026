@@ -12,6 +12,7 @@ public class AdmisionService {
         this.admisionRepository = admisionRepository;
     }
 
+    // TODO FUNCION: Devolver todas las admisiones registradas para que el auxiliar pueda revisar los ingresos.
     public Object findAll() {
         return admisionRepository.findAll();
     }

@@ -25,6 +25,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     @Override
+    // TODO FUNCION: Crear datos iniciales necesarios, como roles y usuario administrador, si no existen.
     public void run(String... args) {
         if (rolRepository.count() == 0) {
             rolRepository.saveAll(List.of(

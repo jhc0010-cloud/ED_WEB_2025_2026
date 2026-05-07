@@ -12,6 +12,7 @@ public class RecetaService {
         this.recetaRepository = recetaRepository;
     }
 
+    // TODO FUNCION: Obtener las recetas emitidas para consultar medicamento, dosis e indicaciones.
     public Object findAll() {
         return recetaRepository.findAll();
     }

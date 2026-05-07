@@ -12,6 +12,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    // TODO FUNCION: Contar usuarios registrados para mostrar estadisticas o comprobar si hay datos iniciales.
     public long count() {
         return usuarioRepository.count();
     }

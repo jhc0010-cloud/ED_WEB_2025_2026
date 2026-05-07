@@ -12,6 +12,7 @@ public class ReiacService {
         this.verificacionReiacRepository = verificacionReiacRepository;
     }
 
+    // TODO FUNCION: Listar las verificaciones REIAC realizadas con microchip, resultado y fecha de consulta.
     public Object findAll() {
         return verificacionReiacRepository.findAll();
     }

@@ -12,6 +12,7 @@ public class PagoService {
         this.pagoRepository = pagoRepository;
     }
 
+    // TODO FUNCION: Devolver los pagos registrados, incluyendo importe, metodo de pago y estado.
     public Object findAll() {
         return pagoRepository.findAll();
     }

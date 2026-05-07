@@ -20,11 +20,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    // TODO FUNCION: Validar las credenciales recibidas y devolver el resultado del inicio de sesion.
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/register")
+    // TODO FUNCION: Registrar un usuario nuevo validando sus datos antes de guardarlo.
     public ResponseEntity<String> register(@RequestBody RegistroRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }

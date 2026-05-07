@@ -10,16 +10,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
+    // TODO FUNCION: Transformar errores de recurso no encontrado en una respuesta HTTP 404 clara.
     public ResponseEntity<Map<String, String>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
     }
 
     @ExceptionHandler(BusinessException.class)
+    // TODO FUNCION: Transformar errores de negocio en una respuesta HTTP 400 comprensible para el cliente.
     public ResponseEntity<Map<String, String>> handleBusiness(BusinessException ex) {
         return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
+    // TODO FUNCION: Capturar errores inesperados y devolver una respuesta generica sin exponer detalles internos.
     public ResponseEntity<Map<String, String>> handleGeneral(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Se ha producido un error interno"));

@@ -12,6 +12,7 @@ public class MascotaService {
         this.mascotaRepository = mascotaRepository;
     }
 
+    // TODO FUNCION: Listar las mascotas registradas para poder ver su ficha y asociarlas con su cliente.
     public Object findAll() {
         return mascotaRepository.findAll();
     }

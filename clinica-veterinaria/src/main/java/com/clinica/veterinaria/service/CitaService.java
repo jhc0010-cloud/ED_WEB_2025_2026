@@ -12,6 +12,7 @@ public class CitaService {
         this.citaRepository = citaRepository;
     }
 
+    // TODO FUNCION: Listar todas las citas con su fecha, motivo y estado para mostrarlas en la agenda.
     public Object findAll() {
         return citaRepository.findAll();
     }

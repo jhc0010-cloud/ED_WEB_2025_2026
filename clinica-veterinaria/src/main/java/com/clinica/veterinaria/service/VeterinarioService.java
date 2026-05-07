@@ -12,6 +12,7 @@ public class VeterinarioService {
         this.veterinarioRepository = veterinarioRepository;
     }
 
+    // TODO FUNCION: Obtener todos los veterinarios para consultar colegiado, especialidad y disponibilidad futura.
     public Object findAll() {
         return veterinarioRepository.findAll();
     }

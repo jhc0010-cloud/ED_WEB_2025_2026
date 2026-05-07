@@ -12,6 +12,7 @@ public class ConsultaService {
         this.consultaRepository = consultaRepository;
     }
 
+    // TODO FUNCION: Recuperar las consultas veterinarias con diagnostico, tratamiento y estado.
     public Object findAll() {
         return consultaRepository.findAll();
     }

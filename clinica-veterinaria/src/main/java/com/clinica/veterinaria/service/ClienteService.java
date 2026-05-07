@@ -12,6 +12,7 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
+    // TODO FUNCION: Obtener todos los clientes para consultar sus datos de contacto y relacionarlos con mascotas.
     public Object findAll() {
         return clienteRepository.findAll();
     }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ViewController {
 
     @GetMapping("/")
+    // TODO FUNCION: Redirigir la raiz de la web a la pagina principal estatica.
     public String home() {
         return "redirect:/index.html";
     }

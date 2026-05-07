@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     @GetMapping("/dashboard")
+    // TODO FUNCION: Devolver la informacion principal del panel segun el perfil del usuario conectado.
     public ResponseEntity<String> dashboard() {
         return ResponseEntity.ok("Panel de administración operativo");
     }

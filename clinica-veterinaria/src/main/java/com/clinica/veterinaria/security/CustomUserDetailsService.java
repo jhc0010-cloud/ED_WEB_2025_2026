@@ -16,6 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
+    // TODO FUNCION: Buscar el usuario por nombre de usuario y adaptarlo al formato que necesita Spring Security.
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return usuarioRepository.findByUsername(username)
                 .map(UserDetailsImpl::new)

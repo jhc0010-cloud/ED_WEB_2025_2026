@@ -17,6 +17,7 @@ public class ReiacController {
     }
 
     @GetMapping
+    // TODO FUNCION: Obtener y devolver el listado de registros de este recurso desde la capa de servicio.
     public ResponseEntity<?> listar() {
         return ResponseEntity.ok(reiacService.findAll());
     }

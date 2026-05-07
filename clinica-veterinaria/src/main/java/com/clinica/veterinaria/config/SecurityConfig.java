@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
+    // TODO FUNCION: Definir que rutas son publicas, que rutas requieren rol y como se realiza login/logout.
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
         http
@@ -49,6 +50,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    // TODO FUNCION: Proporcionar el codificador usado para guardar y comprobar contrasenas de forma segura.
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
