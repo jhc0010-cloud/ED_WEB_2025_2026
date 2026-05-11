@@ -1,0 +1,33 @@
+#!/bin/sh
+
+set -e
+
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROPS_FILE="$BASE_DIR/.mvn/wrapper/maven-wrapper.properties"
+
+if [ ! -f "$PROPS_FILE" ]; then
+  echo "Maven wrapper properties not found: $PROPS_FILE"
+  exit 1
+fi
+
+DISTRIBUTION_URL=$(grep '^distributionUrl=' "$PROPS_FILE" | cut -d'=' -f2-)
+
+if [ -z "$DISTRIBUTION_URL" ]; then
+  echo "distributionUrl not found in $PROPS_FILE"
+  exit 1
+fi
+
+ZIP_NAME=$(basename "$DISTRIBUTION_URL")
+ZIP_BASENAME=${ZIP_NAME%-bin.zip}
+MAVEN_BASE="${HOME}/.m2/wrapper/dists/${ZIP_BASENAME}"
+ZIP_FILE="${MAVEN_BASE}/${ZIP_NAME}"
+EXTRACT_DIR="${MAVEN_BASE}/${ZIP_BASENAME}"
+MAVEN_BIN="${EXTRACT_DIR}/bin/mvn"
+
+if [ ! -x "$MAVEN_BIN" ]; then
+  mkdir -p "$MAVEN_BASE"
+  curl -fsSL "$DISTRIBUTION_URL" -o "$ZIP_FILE"
+  unzip -oq "$ZIP_FILE" -d "$MAVEN_BASE"
+fi
+
+exec "$MAVEN_BIN" "$@"
