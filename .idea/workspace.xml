@@ -5,40 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="be976e35-4c46-4bb6-8956-c150a57259fd" name="Changes" comment="fee">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/ClienteRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/ClienteRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/ConsultaRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/ConsultaRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/LoginRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/repository/CitaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/repository/CitaRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/repository/ConsultaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/repository/ConsultaRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/CitaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/CitaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/ClienteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/ClienteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/MascotaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/MascotaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/PagoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/PagoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/ReiacService.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/ReiacService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/UsuarioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/service/UsuarioService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/admision.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/admision.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/citas.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/citas.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/cliente-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/cliente-form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/clientes.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/clientes.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/mascota-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/mascota-form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/mascotas.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/mascotas.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/reiac.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/auxiliar/reiac.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/admision.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/admision.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/citas.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/citas.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/clientes.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/clientes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/mascotas.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/mascotas.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/reiac.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/auxiliar/reiac.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/veterinario/consulta.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/veterinario/consulta.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/veterinario/lista-espera.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/veterinario/lista-espera.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/veterinario/receta.js" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/js/veterinario/receta.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/veterinario/lista-espera.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/veterinario/lista-espera.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/veterinario/recetas.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/resources/static/veterinario/recetas.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/PagoRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/clinica-veterinaria/src/main/java/com/clinica/veterinaria/dto/PagoRequest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,15 +40,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/G4-BlasVilar-sprint1&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "feature/G7-DavidIglesias-sprint1",
+    "kotlin-language-version-configured": "true"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="G:\Mi unidad\DAW\Entornos de desarollo\ED_WEB_2025_2026\clinica-veterinaria\src\main\java\com\clinica\veterinaria\service" />
+      <recent name="G:\Mi unidad\DAW\Entornos de desarollo\ED_WEB_2025_2026\clinica-veterinaria\src\main\java\com\clinica\veterinaria\repository" />
+      <recent name="G:\Mi unidad\DAW\Entornos de desarollo\ED_WEB_2025_2026\clinica-veterinaria\src\main\java\com\clinica\veterinaria\controller" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-cffe25b9f5b3-intellij.indexing.shared.core-IU-253.28294.334" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="be976e35-4c46-4bb6-8956-c150a57259fd" name="Changes" comment="" />
