@@ -3,23 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clínica Veterinaria</title>
+    <title>Clinica Veterinaria</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<!-- Responsable: Justo Cenit Ruiz - G1 Pagina publica de entrada -->
 <main class="container py-5">
-    <section class="hero-card text-center">
+    <section class="hero-card">
         <span class="badge text-bg-success mb-3">Proyecto DAW</span>
-        <h1>Clínica Veterinaria</h1>
-        <p class="lead">Gestión de clientes, mascotas, citas, consultas, pagos y verificación REIAC.</p>
-        <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
-            <a class="btn btn-success" href="/login.html">Iniciar sesión</a>
-            <a class="btn btn-outline-success" href="/register.html">Registro</a>
+        <div class="page-heading">
+            <div>
+                <h1>Clinica Veterinaria</h1>
+                <p class="lead mb-0">Gestion completa de clientes, mascotas, citas, consultas, recetas, pagos y verificacion REIAC.</p>
+            </div>
+            <a class="btn btn-success" href="/login.html">Iniciar sesion</a>
+        </div>
+
+        <div class="metric-strip">
+            <div><span>Seguridad</span><strong>4 roles</strong></div>
+            <div><span>Operativa</span><strong>CRUD real</strong></div>
+            <div><span>Demo</span><strong>Datos incluidos</strong></div>
+        </div>
+
+        <div class="role-grid">
+            <a class="role-card" href="/admin/dashboard.html">
+                <strong>Administracion</strong>
+                <span>Usuarios y perfiles del sistema.</span>
+            </a>
+            <a class="role-card" href="/auxiliar/dashboard.html">
+                <strong>Auxiliar</strong>
+                <span>Clientes, mascotas, citas y REIAC.</span>
+            </a>
+            <a class="role-card" href="/veterinario/dashboard.html">
+                <strong>Veterinario</strong>
+                <span>Lista de espera, consultas y recetas.</span>
+            </a>
+            <a class="role-card" href="/cliente/dashboard.html">
+                <strong>Cliente</strong>
+                <span>Estado, historial y pagos web.</span>
+            </a>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap mt-4">
+            <a class="btn btn-outline-success" href="/register.html">Crear cuenta cliente</a>
+            <a class="btn btn-outline-secondary" href="/login.html">Entrar con usuario demo</a>
         </div>
     </section>
 </main>
 <script src="/js/common/logger.js"></script>
 </body>
 </html>
-

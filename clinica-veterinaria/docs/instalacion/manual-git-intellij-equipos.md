@@ -1,5 +1,7 @@
 # Manual de trabajo con Git e IntelliJ para equipos
 
+Responsable documentacion de equipo: Giulshen Hueso - G8.
+
 ## Objetivo
 
 Este manual explica como debe trabajar cada estudiante del proyecto en IntelliJ IDEA y cual es el flujo que deben seguir los jefes de equipo para integrar cambios en `develop` y, al final, en `main`.
@@ -341,5 +343,3 @@ Solucion:
 - "Yo trabajo en mi rama, no en `main`".
 - "El jefe de equipo integra en `develop`".
 - "`main` solo se actualiza cuando todo funciona".
-
-22
