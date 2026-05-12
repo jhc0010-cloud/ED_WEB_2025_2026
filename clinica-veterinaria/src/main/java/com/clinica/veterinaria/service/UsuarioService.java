@@ -24,7 +24,6 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // TODO FUNCION: Contar usuarios registrados para mostrar estadisticas o comprobar si hay datos iniciales.
     public long count() {
         return this.usuarioRepository.count();
     }
