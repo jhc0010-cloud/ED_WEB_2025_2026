@@ -12,6 +12,8 @@ classDiagram
         String descripcion
     }
 
+
+sdd
     class Usuario {
         Long id
         String nombre
