@@ -84,6 +84,7 @@ En Windows:
 - `docs/manual-usuario/manual-cliente.md`
 - `docs/api/documantacion-api-rest.md`
 - `docs/bd/diccionario-datos.md`
+- `docs/bd/mock-data-mysql.sql`
 - `docs/diseno/diagrama-clases.md`
 - `docs/diseno/diagrama-entidad-relacion.md`
 - `docs/instalacion/manual-instalacion.md`

@@ -33,6 +33,7 @@ Este indice resume el contenido de la carpeta `docs` y ayuda a localizar cada do
 | --- | --- |
 | `bd/diccionario-datos.md` | Tablas, campos, tipos y descripcion funcional. |
 | `bd/base_datos_clinica_veterinaria_comentada.md` | Referencia SQL comentada. |
+| `bd/mock-data-mysql.sql` | Datos de prueba para insertar en MySQL. |
 
 ## Diseno
 
