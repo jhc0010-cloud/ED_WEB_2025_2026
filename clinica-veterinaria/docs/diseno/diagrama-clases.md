@@ -3,7 +3,7 @@
 Responsable documentacion de diseno: David Martinez - G8.
 
 Diagrama simplificado de las entidades principales del proyecto.
-
+Arreglar esto
 ```mermaid
 classDiagram
     class Rol {
@@ -13,7 +13,6 @@ classDiagram
     }
 
 
-sdd
     class Usuario {
         Long id
         String nombre
