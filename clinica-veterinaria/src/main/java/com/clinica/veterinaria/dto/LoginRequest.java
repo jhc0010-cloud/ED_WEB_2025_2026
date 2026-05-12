@@ -1,15 +1,11 @@
 package com.clinica.veterinaria.dto;
 
-public record LoginRequest(String username, String password) {
+// Responsable backend: Juan Hakram Huertas Chergui - G1, contratos de entrada y salida DTO.
+import jakarta.validation.constraints.NotBlank;
 
-    @Override
-    public String username() {
-        return username;
-    }
-
-    @Override
-    public String password() {
-        return password;
-    }
+public record LoginRequest(
+    @NotBlank(message = "El usuario es obligatorio")
+    String username,
+    @NotBlank(message = "La contrasena es obligatoria")
+    String password) {
 }
-
