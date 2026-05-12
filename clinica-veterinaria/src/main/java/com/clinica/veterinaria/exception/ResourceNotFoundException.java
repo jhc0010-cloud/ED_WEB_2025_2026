@@ -1,11 +1,9 @@
 package com.clinica.veterinaria.exception;
 
-public class ResourceNotFoundException extends RuntimeException {
-
-    // TODO FUNCION: Crear una excepcion para avisar de que un recurso solicitado no existe.
-
+// Responsable backend: Juan Hakram Huertas Chergui - G1, manejo de errores backend.
+public class ResourceNotFoundException
+extends RuntimeException {
     public ResourceNotFoundException(String message) {
         super(message);
     }
 }
-
